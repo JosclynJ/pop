@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import *
 from .forms import *
+import os
+from django.conf import settings
 from django.contrib.auth.models import User, Group
 
 # Create your views here.
@@ -38,6 +40,14 @@ def tambah_atau_edit_berita(request, berita_id=None):
 def hapus_berita(request, berita_id):
     # Mendapatkan objek berita berdasarkan ID
     berita = get_object_or_404(Berita, id=berita_id)
+    # Mengecek apakah berita memiliki gambar dan menghapusnya
+    if berita.gambar:
+        # Mendapatkan path file gambar
+        gambar_path = os.path.join(settings.MEDIA_ROOT, str(berita.gambar))
+        
+        # Menghapus file gambar jika ada
+        if os.path.exists(gambar_path):
+            os.remove(gambar_path)
     
     # Menghapus berita
     berita.delete()
