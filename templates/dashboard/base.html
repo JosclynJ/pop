@@ -12,6 +12,7 @@
     <!-- Link ke DataTables CSS -->
     <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
     <link rel="icon" href="{% static 'img/logo.png' %}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         /* Warna dan font khusus */
@@ -49,10 +50,43 @@
         .table-flush th, .table-flush td {
             padding-left: 0 !important;
         }
-        
+        /* Navbar atas di sebelah sidebar */
+        .navbar {
+            background-color: #ffffff;
+            width: 100%;
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 215px; /* Posisi navbar sebelah kanan sidebar */
+        }
+
+        .navbar .navbar-content {
+            display: flex;
+            justify-content: flex-end !important;  /* Pastikan ini menempatkan elemen di kanan */
+            width: 1080px; /* Pastikan navbar-content mengambil lebar penuh */
+        }
+
+        .navbar .time {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .navbar .username {
+            font-size: 18px;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
+
+<!-- Navbar atas -->
+<div class="navbar navbar-expand-lg ">
+    <div class="navbar-content d-flex justify-content-end">
+        <div class="time me-2" id="current-time"></div>
+        <div class="username">Welcome, <span style="color: #00b9ad;">{{ user.username }}</span></div>
+    </div>
+</div>
 
 <!-- Sidebar -->
 <div class="sidebar p-3 text-light">
@@ -61,15 +95,14 @@
         Dashboard
     </div>
     <div class="nav flex-column">
-        <a class="nav-link active text-white py-3 rounded mb-2" href="#">
+        <a class="nav-link text-white py-3 {% if request.path == '/dashboard' %} text-white py-3 rounded mb-2 active {% endif %} rounded mb-2" href="{% url 'dashboard' %}">
             <i class="fas fa-home"></i> Home
         </a>
-        <a class="nav-link text-white py-3 rounded mb-2" href="{% url "berita_list" %}">
+        <a class="nav-link text-white py-3 {% if 'user' in request.path %} text-white py-3 rounded mb-2 active {% endif %} rounded mb-2" href="{% url 'user_list' %}">
+            <i class="fas fa-users"></i> User
+        </a>
+        <a class="nav-link text-white py-3 {% if 'berita' in request.path %} text-white py-3 rounded mb-2 active {% endif %} rounded mb-2" href="{% url 'berita_list' %}">
             <i class="fas fa-newspaper"></i> Berita
-        </a>
-        <a class="nav-link text-white py-3 rounded mb-2" href="#">
-            <i class="fas fa-cogs"></i> Settings
-        </a>
         <a class="nav-link text-white py-3 rounded mb-2" href="/logout">
             <i class="fas fa-sign-out-alt"></i> Logout
         </a>
@@ -77,24 +110,6 @@
 </div>
 
 <div class="container-fluid p-4">
-    {% if messages %}
-  {% for message in messages %}
-    <div class="alert alert-dismissible fade show 
-      {% if message.tags %}
-        alert-{{ message.tags }}
-      {% else %}
-        alert-info
-      {% endif %}
-      text-white" role="alert">
-      
-      <span class="text-sm">{{ message }}</span>
-      
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-  {% endfor %}
-{% endif %}
 
 {% block content %}
 
@@ -117,4 +132,38 @@
     $(document).ready(function() {
         $('#beritaTable').DataTable();  // Mengaktifkan DataTables
     });
+     // Script untuk menampilkan jam secara real-time
+    function updateTime() {
+        var now = new Date();
+        var hours = now.getHours().toString().padStart(2, '0');
+        var minutes = now.getMinutes().toString().padStart(2, '0');
+        var seconds = now.getSeconds().toString().padStart(2, '0');
+        document.getElementById('current-time').textContent = hours + ':' + minutes + ':' + seconds;
+    }
+
+    setInterval(updateTime, 1000); // Update setiap detik
+</script>
+
+<!-- SweetAlert2 script -->
+<script>
+    {% if messages %}
+        {% for message in messages %}
+            // Define SweetAlert2 alert based on message type
+            let messageType = "{{ message.tags }}"; // This will be 'success', 'error', 'warning', or 'info'
+            let messageText = "{{ message }}"; // The actual message
+
+            // Trigger SweetAlert2 notification
+            Swal.fire({
+                icon: messageType === 'success' ? 'success' :
+                      messageType === 'error' ? 'error' :
+                      messageType === 'warning' ? 'warning' : 'info',
+                title: messageType === 'success' ? 'Sukses!' :
+                       messageType === 'error' ? 'Gagal!' :
+                       messageType === 'warning' ? 'Peringatan!' : 'Informasi',
+                text: messageText,
+                showConfirmButton: true,
+                timer: 5000 // Close after 5 seconds
+            });
+        {% endfor %}
+    {% endif %}
 </script>

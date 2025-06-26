@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import *
 from .forms import *
+from django.contrib.auth.models import User, Group
 
 # Create your views here.
 def berita_list(request):
@@ -43,3 +44,41 @@ def hapus_berita(request, berita_id):
     
     # Redirect ke daftar berita setelah penghapusan
     return redirect('berita_list')
+
+# Menampilkan daftar user
+def user_list(request):
+    template_name = 'dashboard/user_list.html'
+    users = User.objects.all()
+    context = {
+        "users": users
+    }
+    return render(request, template_name, context)
+
+# Menambah atau mengedit user
+def edit_user(request, user_id=None):
+    template_name = 'dashboard/user_form.html'
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        form = UserForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()  # Simpan perubahan user
+            return redirect('user_list')  # Redirect ke daftar user setelah berhasil edit
+    else:
+        form = UserForm(instance=user)
+
+    context = {
+        'form': form, 
+        'user': user
+    }
+    return render(request, template_name, context)
+
+# Menghapus user
+def hapus_user(request, user_id):
+    # Mendapatkan objek user berdasarkan ID
+    user = get_object_or_404(User, id=user_id)
+    
+    # Menghapus user
+    user.delete()
+    
+    # Redirect ke daftar user setelah penghapusan
+    return redirect('user_list')

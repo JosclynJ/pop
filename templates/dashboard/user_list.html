@@ -1,0 +1,49 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="content flex-fill mt-5">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 py-2">Daftar User</h5>
+            </div>
+        </div>
+        <div class="card-body">
+            <table id="userTable" class="table table-flush">
+                <thead>
+                    <tr>
+                        <th class="text-center">No</th>
+                        <th>Username</th>
+                        <th>Nama Lengkap</th>
+                        <th class="text-center">Status</th>
+                        <th>Tanggal Dibuat</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td class="text-center">{{ forloop.counter }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.get_full_name|default:"-" }}</td>
+                        <td class="text-center">
+                            {% if user.is_staff %}
+                                <span class="badge bg-success"><i class="fa-solid fa-circle-check"></i></span>
+                            {% else %}
+                                <span class="badge bg-secondary"><i class="fa-solid fa-circle-xmark"></i></span>
+                            {% endif %}
+                        </td>
+                        <td>{{ user.date_joined }}</td>
+                        <td class="text-center">
+                            <a class="btn btn-warning px-3 py-2 text-light" href="{% url 'edit_user' user.id %}"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                            <a class="btn btn-danger px-3 py-2" onClick="return confirm('Yakin ingin menghapus?')" href="{% url 'hapus_user' user.id %}"><i class="fa-solid fa-trash"></i> Hapus</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

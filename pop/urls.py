@@ -24,6 +24,7 @@ from pop.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', login, name='login'),
+    path('register', register, name='register'),
     path('dashboard', dashboard, name='dashboard'),
     path('logout', logout, name='logout'),
     path('dashboard/', include('berita.urls')), 

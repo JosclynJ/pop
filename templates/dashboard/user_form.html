@@ -1,0 +1,22 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="content flex-fill mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0 py-2">{% if form.instance.pk %}Edit{% else %}Tambah{% endif %} User</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}  <!-- Menampilkan form sebagai paragraf -->
+                <button type="submit" class="btn btn-success">
+                    {% if form.instance.pk %}Update{% else %}Tambah{% endif %} User
+                </button>
+                <a href="{% url 'user_list' %}" class="btn btn-secondary ms-2">Kembali ke Daftar User</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
