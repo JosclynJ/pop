@@ -1,0 +1,46 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Daftar Berita</h5> 
+            <a class="btn btn-success px-3 py-2" href="{% url "tambah_berita" %}"><i class="fa-solid fa-plus"></i> Tambah</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="beritaTable" class="table table-flush">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th>Judul</th>
+                    <th>Gambar</th>
+                    <th>Tanggal Dibuat</th>
+                    <th>Dibuat Oleh</th>
+                    <th class="text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in berita %}
+                <tr>
+                    <td class="text-center">{{forloop.counter}}</td>
+                    <td>{{ b.judul }}</td>
+                    <td>
+                        <img src="{{ b.gambar.url }}" alt="{{ b.judul }}" width="100">
+                    </td>
+                    <td>{{ b.created_at }}</td>
+                    <td>{{ b.created_by.username }}</td>
+                    <td class="text-center">
+                        <a class="btn btn-warning px-3 py-2 text-light" href="{% url 'edit_berita' b.id %}"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                        <a class="btn btn-danger px-3 py-2" onClick="return confirm('Yakin ingin menghapus?')" href="#"><i class="fa-solid fa-trash"></i> Hapus</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

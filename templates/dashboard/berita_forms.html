@@ -1,0 +1,32 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0 py-2">{% if berita %}Edit Berita{% else %}Tambah Berita{% endif %}</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="{{ form.judul.id_for_label }}" class="form-label">Judul</label>
+                    {{ form.judul }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.konten.id_for_label }}" class="form-label">Konten</label>
+                    {{ form.konten }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.gambar.id_for_label }}" class="form-label">Gambar</label>
+                    {{ form.gambar }}
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Update Berita</button>
+                <a href="{% url 'berita_list' %}" class="btn btn-secondary ms-2">Kembali ke Daftar Berita</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}
